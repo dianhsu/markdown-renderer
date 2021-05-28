@@ -1,30 +1,22 @@
 #!/usr/bin/env node
 
 import * as mume from "@shd101wyy/mume";
-import * as fse from 'fs-extra';
 
 const program = require('commander');
-let filePath;
-let projectDirectoryPath;
 
 /* Parse command parameters */
 program
     .version(require('../package.json').version)
-    .arguments('<input> <projectDirectory>')
-    .action(function (input, projectDirectory) {
-        filePath = input;
-        projectDirectoryPath = projectDirectory;
-    });
+    .requiredOption('-i, --input <filePath>', "markdown file path")
+    .option('-p, --project_path <projectDirectory>', "Project Directory", './')
 program.parse(process.argv);
 
-/* Show help if no parameters are passed */
-if ((typeof filePath == 'undefined') ||
-    (typeof projectDirectoryPath == 'undefined')) {
-    program.help();
-}
+const options = program.opts()
+let filePath = options.input;
+let projectDirectoryPath = options.project_path;
 
 /* Ensure parameters are correct */
-if (!filePath.endsWith(".md")) {
+if (!options.input || !options.input.endsWith(".md")) {
     console.error("File to convert must be a .md file");
     process.exit(1);
 }
